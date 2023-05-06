@@ -1,6 +1,11 @@
 import { AddMasterDTO } from './dto/addMasterDto';
+import { extendClosingDateDTO } from './dto/extendClosingDateDTO';
 import { MasterRepository } from './master.repository';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 @Injectable()
 export class MasterService {
@@ -19,9 +24,37 @@ export class MasterService {
     throw new BadRequestException('invalid date');
   }
 
-  // delete master degree
   public async deleteMaster(masterID: number) {
     return await this.masterRespository.removeMaster(masterID);
+  }
+
+  public async extendMasterClosingDate(
+    extendClosingDateDTO: extendClosingDateDTO,
+  ) {
+    const master = await this.masterRespository.findMasterById(
+      extendClosingDateDTO.masterID,
+    );
+
+    if (!master) throw new BadRequestException('wrong master id');
+
+    if (
+      !this.timeIntervalGreaterThanOneDay(
+        extendClosingDateDTO.date,
+        master.closing_date,
+      )
+    )
+      throw new BadRequestException(
+        'new date must be one day greater than old date',
+      );
+
+    try {
+      await this.masterRespository.extendMasterClosingDate(
+        extendClosingDateDTO,
+      );
+    } catch (error: any) {
+      console.log(error);
+      throw new InternalServerErrorException();
+    }
   }
 
   private timeIntervalGreaterThanOneDay = (
