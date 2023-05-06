@@ -5,38 +5,33 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ResponsilbeJwt } from './responsible.jwt';
+import { authJwt } from './jwtInterface';
 
 @Injectable()
-export class ResponsibleAuthGuard implements CanActivate {
+export class authGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request: Request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
-    console.log(token);
 
     if (!token) {
       throw new UnauthorizedException();
     }
 
     try {
-      const payload = (await this.jwtService.verifyAsync(
-        token,
-      )) as ResponsilbeJwt;
-      request['responsibleId'] = payload.id;
-      
-      return true;
+      const payload = (await this.jwtService.verifyAsync(token)) as authJwt;
+      request['user'] = payload;
     } catch {
       throw new UnauthorizedException();
     }
+
+    return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
     const bearerToken =
       request.headers['authorization'] || request.headers['Authorization'];
-
-    console.log(bearerToken);
 
     if (typeof bearerToken === 'string') {
       const [type, token] = bearerToken.split(' ');

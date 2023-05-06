@@ -11,7 +11,6 @@ export class ResponsibleRepository {
         where: { login: login },
       });
     } catch (e: any) {
-      console.log(e);
       throw new InternalServerErrorException();
     }
   }

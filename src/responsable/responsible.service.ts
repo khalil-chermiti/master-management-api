@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SigninDTO } from './dto/signinDTO';
+import { authJwt } from 'src/guards/jwtInterface';
 import { ResponsibleRepository } from './responsible.respository';
 
 @Injectable()
@@ -24,6 +25,8 @@ export class ResponsibleService {
     if (responsible.password !== signinDTO.password)
       throw new NotAcceptableException('wrong password!');
 
-    return this.jwtService.sign({ id: responsible.id }, { expiresIn: '1h' });
+    const payload: authJwt = { id: responsible.id.toString(), role: 'AMDIN' };
+
+    return this.jwtService.sign(payload, { expiresIn: '1h' });
   }
 }

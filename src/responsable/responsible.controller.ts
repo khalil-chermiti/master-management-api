@@ -6,9 +6,10 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ResponsibleAuthGuard } from './responsible.guard';
-import { ResponsibleService } from './responsible.service';
 import { SigninDTO } from './dto/signinDTO';
+import { isAdmin } from 'src/guards/authorization.guard';
+import { authGuard } from '../guards/authentication.guard';
+import { ResponsibleService } from './responsible.service';
 
 @Controller('admin')
 export class ResponsibleController {
@@ -27,7 +28,8 @@ export class ResponsibleController {
   }
 
   @Get('test')
-  @UseGuards(ResponsibleAuthGuard)
+  @UseGuards(isAdmin)
+  @UseGuards(authGuard)
   public async tes() {
     return 'hello';
   }

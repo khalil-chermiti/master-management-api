@@ -18,3 +18,12 @@ model Responsible {
   login      String @unique @db.VarChar(250)
   password   String @db.VarChar(250)
 }
+
+model Master {
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String
+  start_date   DateTime
+  closing_date DateTime
+  is_active    Boolean?
+}
