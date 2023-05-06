@@ -1,11 +1,16 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PrismaClient } from '@prisma/client';
+import { JwtModule } from '@nestjs/jwt';
+import { PrismaService } from './prismaService/prisma.service';
+import { ResponsibleModule } from './responsable/responsible.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService, PrismaClient],
+  imports: [
+    JwtModule.register({
+      global: true,
+      secret: 'dadoothisisthesecret',
+    }),
+    ResponsibleModule,
+  ],
+  providers: [PrismaService],
 })
 export class AppModule {}
