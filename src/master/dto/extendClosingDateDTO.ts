@@ -1,4 +1,4 @@
-export class extendClosingDateDTO {
+export class ExtendClosingDateDTO {
   masterID: number;
   date: Date | string;
 }

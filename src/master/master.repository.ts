@@ -1,7 +1,8 @@
 import { AddMasterDTO } from './dto/addMasterDto';
 import { PrismaService } from 'src/prismaService/prisma.service';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { extendClosingDateDTO } from './dto/extendClosingDateDTO';
+import { ExtendClosingDateDTO } from './dto/extendClosingDateDTO';
+import { UpdateMasterStatusDTO } from './dto/updateMasterStatusDto';
 
 @Injectable()
 export class MasterRepository {
@@ -35,7 +36,7 @@ export class MasterRepository {
   }
 
   public async extendMasterClosingDate(
-    extendClosingDateDTO: extendClosingDateDTO,
+    extendClosingDateDTO: ExtendClosingDateDTO,
   ) {
     return await this.prismaService.master.update({
       where: { id: extendClosingDateDTO.masterID },
@@ -48,6 +49,15 @@ export class MasterRepository {
   public async findMasterById(masterID: number) {
     return await this.prismaService.master.findUnique({
       where: { id: masterID },
+    });
+  }
+
+  public async updateMasterStatus(updateMasterDTO: UpdateMasterStatusDTO) {
+    return await this.prismaService.master.update({
+      where: { id: updateMasterDTO.masterID },
+      data: {
+        is_active: updateMasterDTO.status,
+      },
     });
   }
 }

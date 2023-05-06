@@ -10,7 +10,8 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { extendClosingDateDTO } from './dto/extendClosingDateDTO';
+import { ExtendClosingDateDTO } from './dto/extendClosingDateDTO';
+import { UpdateMasterStatusDTO } from './dto/updateMasterStatusDto';
 
 @Controller('master')
 export class MasterController {
@@ -31,14 +32,23 @@ export class MasterController {
     return await this.masterService.deleteMaster(masterID);
   }
 
-  @Patch(':masterID')
+  @Patch(':masterID/date')
   @UseGuards(isAdmin)
   @UseGuards(authGuard)
   public async updateClosingDate(
-    @Body() extendClosingDateDTO: extendClosingDateDTO,
+    @Body() extendClosingDateDTO: ExtendClosingDateDTO,
   ) {
     return await this.masterService.extendMasterClosingDate(
       extendClosingDateDTO,
     );
+  }
+
+  @Patch(':masterID/status')
+  @UseGuards(isAdmin)
+  @UseGuards(authGuard)
+  public async updateMasterStatus(
+    @Body() updateMasterStatusDTO: UpdateMasterStatusDTO,
+  ) {
+    return this.masterService.updateMasterStatus(updateMasterStatusDTO);
   }
 }

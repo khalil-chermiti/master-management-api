@@ -1,5 +1,6 @@
 import { AddMasterDTO } from './dto/addMasterDto';
-import { extendClosingDateDTO } from './dto/extendClosingDateDTO';
+import { ExtendClosingDateDTO } from './dto/extendClosingDateDTO';
+import { UpdateMasterStatusDTO } from './dto/updateMasterStatusDto';
 import { MasterRepository } from './master.repository';
 import {
   BadRequestException,
@@ -29,7 +30,7 @@ export class MasterService {
   }
 
   public async extendMasterClosingDate(
-    extendClosingDateDTO: extendClosingDateDTO,
+    extendClosingDateDTO: ExtendClosingDateDTO,
   ) {
     const master = await this.masterRespository.findMasterById(
       extendClosingDateDTO.masterID,
@@ -53,6 +54,14 @@ export class MasterService {
       );
     } catch (error: any) {
       console.log(error);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  public async updateMasterStatus(updateMasterDTO: UpdateMasterStatusDTO) {
+    try {
+      await this.masterRespository.updateMasterStatus(updateMasterDTO);
+    } catch {
       throw new InternalServerErrorException();
     }
   }
