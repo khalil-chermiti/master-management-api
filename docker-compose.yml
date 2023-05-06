@@ -1,0 +1,28 @@
+version: '3.1'
+
+services :
+  db:
+    container_name: postgresql
+    image: postgres:latest
+    restart: always
+    networks : 
+      - master-network  
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: masterdb
+  admin:
+    container_name: adminer
+    image: adminer
+    restart: always
+    depends_on: 
+      - db
+    ports:
+      - 8080:8080
+    networks : 
+      - master-network  
+
+networks:
+  master-network :
