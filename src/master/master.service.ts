@@ -49,7 +49,7 @@ export class MasterService {
       );
 
     try {
-      await this.masterRespository.extendMasterClosingDate(
+      return await this.masterRespository.extendMasterClosingDate(
         extendClosingDateDTO,
       );
     } catch (error: any) {
@@ -60,7 +60,7 @@ export class MasterService {
 
   public async updateMasterStatus(updateMasterDTO: UpdateMasterStatusDTO) {
     try {
-      await this.masterRespository.updateMasterStatus(updateMasterDTO);
+      return await this.masterRespository.updateMasterStatus(updateMasterDTO);
     } catch {
       throw new InternalServerErrorException();
     }

@@ -10,13 +10,16 @@ import { SigninDTO } from './dto/signinDTO';
 import { isAdmin } from 'src/guards/authorization.guard';
 import { authGuard } from '../guards/authentication.guard';
 import { ResponsibleService } from './responsible.service';
+import { SigninResponseDTO } from './dto/signinResponseDTO';
 
 @Controller('admin')
 export class ResponsibleController {
   constructor(private responsibleService: ResponsibleService) {}
 
   @Post('login')
-  public async signin(@Body() signinDTO: SigninDTO) {
+  public async signin(
+    @Body() signinDTO: SigninDTO,
+  ): Promise<SigninResponseDTO> {
     const token = await this.responsibleService.signin(signinDTO);
 
     if (!token)

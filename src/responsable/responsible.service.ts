@@ -1,10 +1,11 @@
-import {
-  Injectable,
-  NotAcceptableException,
-  NotFoundException,
-} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { SigninDTO } from './dto/signinDTO';
+import { Responsible } from '@prisma/client';
 import { authJwt } from 'src/guards/jwtInterface';
 import { ResponsibleRepository } from './responsible.respository';
 
@@ -15,15 +16,22 @@ export class ResponsibleService {
     private jwtService: JwtService,
   ) {}
   async signin(signinDTO: SigninDTO): Promise<string> {
-    const responsible =
-      await this.responsibleRepository.findResponsibleByUserName(
+    if (!signinDTO.login || !signinDTO.password)
+      throw new BadRequestException('missing login or password');
+
+    let responsible: Responsible;
+    try {
+      responsible = await this.responsibleRepository.findResponsibleByUserName(
         signinDTO.login,
       );
+    } catch {
+      throw new InternalServerErrorException();
+    }
 
-    if (!responsible) throw new NotFoundException('username is not found!');
+    if (!responsible) throw new BadRequestException('responsible not found');
 
     if (responsible.password !== signinDTO.password)
-      throw new NotAcceptableException('wrong password!');
+      throw new BadRequestException('wrong password');
 
     const payload: authJwt = { id: responsible.id.toString(), role: 'AMDIN' };
 

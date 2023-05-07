@@ -6,12 +6,8 @@ export class ResponsibleRepository {
   constructor(private prismaService: PrismaService) {}
 
   public async findResponsibleByUserName(login: string) {
-    try {
-      return this.prismaService.responsible.findUnique({
-        where: { login: login },
-      });
-    } catch (e: any) {
-      throw new InternalServerErrorException();
-    }
+    return this.prismaService.responsible.findUnique({
+      where: { login: login },
+    });
   }
 }

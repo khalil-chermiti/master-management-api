@@ -1,18 +1,22 @@
+import {
+  Body,
+  Post,
+  Patch,
+  Delete,
+  UseGuards,
+  Controller,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { MasterService } from './master.service';
 import { AddMasterDTO } from './dto/addMasterDto';
 import { isAdmin } from 'src/guards/authorization.guard';
 import { authGuard } from 'src/guards/authentication.guard';
-import {
-  Body,
-  Controller,
-  Delete,
-  Patch,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
 import { ExtendClosingDateDTO } from './dto/extendClosingDateDTO';
+import { AddMasterResponseDTO } from './dto/addMasterResponseDTO';
 import { UpdateMasterStatusDTO } from './dto/updateMasterStatusDto';
-
+import { DeleteMasterResponseDTO } from './dto/DeleteMasterResponseDTO';
+import { ExtendClosingDateResponseDTO } from './dto/extendMasterStatusResponseDTO';
+import { UpdateMasterStatusResponseDTO } from './dto/updateMasterStatusResponseDTO';
 @Controller('master')
 export class MasterController {
   constructor(private masterService: MasterService) {}
@@ -20,16 +24,35 @@ export class MasterController {
   @Post()
   @UseGuards(isAdmin)
   @UseGuards(authGuard)
-  public async addMaster(@Body() addMasterDTO: AddMasterDTO) {
-    console.log(addMasterDTO);
-    return await this.masterService.addMaster(addMasterDTO);
+  public async addMaster(
+    @Body() addMasterDTO: AddMasterDTO,
+  ): Promise<AddMasterResponseDTO> {
+    try {
+      const master = await this.masterService.addMaster(addMasterDTO);
+      return {
+        success: true,
+        data: master,
+      };
+    } catch {
+      throw new InternalServerErrorException();
+    }
   }
 
   @Delete()
   @UseGuards(isAdmin)
   @UseGuards(authGuard)
-  public async deleteMaster(@Body('masterID') masterID: number) {
-    return await this.masterService.deleteMaster(masterID);
+  public async deleteMaster(
+    @Body('masterID') masterID: number,
+  ): Promise<DeleteMasterResponseDTO> {
+    try {
+      const master = await this.masterService.deleteMaster(masterID);
+      return {
+        success: true,
+        data: master,
+      };
+    } catch {
+      throw new InternalServerErrorException();
+    }
   }
 
   @Patch(':masterID/date')
@@ -37,10 +60,18 @@ export class MasterController {
   @UseGuards(authGuard)
   public async updateClosingDate(
     @Body() extendClosingDateDTO: ExtendClosingDateDTO,
-  ) {
-    return await this.masterService.extendMasterClosingDate(
-      extendClosingDateDTO,
-    );
+  ): Promise<ExtendClosingDateResponseDTO> {
+    try {
+      const master = await this.masterService.extendMasterClosingDate(
+        extendClosingDateDTO,
+      );
+      return {
+        success: true,
+        data: master,
+      };
+    } catch {
+      throw new InternalServerErrorException();
+    }
   }
 
   @Patch(':masterID/status')
@@ -48,7 +79,17 @@ export class MasterController {
   @UseGuards(authGuard)
   public async updateMasterStatus(
     @Body() updateMasterStatusDTO: UpdateMasterStatusDTO,
-  ) {
-    return this.masterService.updateMasterStatus(updateMasterStatusDTO);
+  ): Promise<UpdateMasterStatusResponseDTO> {
+    try {
+      const master = await this.masterService.updateMasterStatus(
+        updateMasterStatusDTO,
+      );
+      return {
+        success: true,
+        data: master,
+      };
+    } catch {
+      throw new InternalServerErrorException();
+    }
   }
 }
