@@ -1,8 +1,8 @@
 import { AddMasterDTO } from './dto/addMasterDto';
 import { PrismaService } from 'src/prismaService/prisma.service';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ExtendClosingDateDTO } from './dto/extendClosingDateDTO';
 import { UpdateMasterStatusDTO } from './dto/updateMasterStatusDto';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 @Injectable()
 export class MasterRepository {
@@ -20,7 +20,6 @@ export class MasterRepository {
         },
       });
     } catch (error: any) {
-      console.log(error);
       throw new InternalServerErrorException();
     }
   }

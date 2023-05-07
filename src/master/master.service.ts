@@ -1,7 +1,7 @@
 import { AddMasterDTO } from './dto/addMasterDto';
+import { MasterRepository } from './master.repository';
 import { ExtendClosingDateDTO } from './dto/extendClosingDateDTO';
 import { UpdateMasterStatusDTO } from './dto/updateMasterStatusDto';
-import { MasterRepository } from './master.repository';
 import {
   BadRequestException,
   Injectable,
@@ -53,7 +53,6 @@ export class MasterService {
         extendClosingDateDTO,
       );
     } catch (error: any) {
-      console.log(error);
       throw new InternalServerErrorException();
     }
   }

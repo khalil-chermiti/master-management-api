@@ -4,8 +4,11 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { z } from 'zod';
+import { JwtService } from '@nestjs/jwt';
 import { Candidate } from '@prisma/client';
+import { authJwt } from 'src/guards/jwtInterface';
 import { SignUpInputDTO } from './dto/signupInputDTO';
+import { SigninInputDTO } from './dto/signinInputDTO';
 import { CandidateRepository } from './candidate.repository';
 import { HashingService } from 'src/hashingService/hashingService';
 
@@ -14,20 +17,18 @@ export class CandidateService {
   constructor(
     private candidateRepository: CandidateRepository,
     private hashingService: HashingService,
+    private jwtService: JwtService,
   ) {}
 
   public async signup(signupInputDTO: SignUpInputDTO): Promise<Candidate> {
     const result = this.validateUserInputData(signupInputDTO);
 
-    if (result.success === false) {
-      console.log(result.error.message);
+    if (result.success === false)
       throw new BadRequestException(result.error.message);
-    }
 
     const emailExists = await this.candidateRepository.findCandidateByEmail(
       result.data.email,
     );
-    console.log(emailExists);
 
     if (emailExists) throw new ConflictException('email already exists');
 
@@ -92,4 +93,41 @@ export class CandidateService {
         });
       }
     });
+
+  public async signin(signinDTO: SigninInputDTO): Promise<string> {
+    const result = this.validateCandidateSigninInput(signinDTO);
+
+    if (result.success === false)
+      throw new BadRequestException(result.error.message);
+
+    const candidate = await this.candidateRepository.findCandidateByUsername(
+      result.data.login,
+    );
+
+    if (!candidate) throw new BadRequestException('username does not exist');
+
+    const isValidPassword = await this.hashingService.verifyPassword(
+      result.data.password,
+      candidate.password,
+    );
+
+    if (!isValidPassword) throw new BadRequestException('wrong password');
+
+    const payload = {
+      id: candidate.id.toString(),
+      role: 'CANDIDATE',
+    } as authJwt;
+
+    const token = this.jwtService.sign(payload, { expiresIn: '1h' });
+
+    return token;
+  }
+
+  private validateCandidateSigninInput = (data: SigninInputDTO) =>
+    z
+      .object({
+        login: z.string().min(3),
+        password: z.string(),
+      })
+      .safeParse(data);
 }

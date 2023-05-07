@@ -26,6 +26,7 @@ export class ResponsibleController {
       throw new InternalServerErrorException('error occured, please retry');
 
     return {
+      success: true,
       token: token,
     };
   }
