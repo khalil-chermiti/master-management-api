@@ -1,3 +1,4 @@
+import { Master } from '@prisma/client';
 import { AddMasterDTO } from './dto/addMasterDto';
 import { MasterRepository } from './master.repository';
 import { ExtendClosingDateDTO } from './dto/extendClosingDateDTO';
@@ -7,7 +8,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { Master } from '@prisma/client';
 
 @Injectable()
 export class MasterService {
@@ -33,9 +33,14 @@ export class MasterService {
   public async extendMasterClosingDate(
     extendClosingDateDTO: ExtendClosingDateDTO,
   ) {
-    const master = await this.masterRespository.findMasterById(
-      extendClosingDateDTO.masterID,
-    );
+    let master: Master;
+    try {
+      master = await this.masterRespository.findMasterById(
+        extendClosingDateDTO.masterID,
+      );
+    } catch {
+      throw new BadRequestException('invalid input data');
+    }
 
     if (!master) throw new BadRequestException('wrong master id');
 

@@ -5,35 +5,38 @@ import {
   Patch,
   Delete,
   UseGuards,
-  Controller,
-  InternalServerErrorException,
+  Controller, HttpException
 } from '@nestjs/common';
+import { Master } from '@prisma/client';
 import { MasterService } from './master.service';
 import { AddMasterDTO } from './dto/addMasterDto';
 import { isAdmin } from 'src/guards/authorization.guard';
 import { authGuard } from 'src/guards/authentication.guard';
 import { ExtendClosingDateDTO } from './dto/extendClosingDateDTO';
-import { AddMasterResponseDTO } from './dto/addMasterResponseDTO';
 import { UpdateMasterStatusDTO } from './dto/updateMasterStatusDto';
-import { DeleteMasterResponseDTO } from './dto/DeleteMasterResponseDTO';
-import { GetAvailableMastersDTO } from './dto/getAvailableMastersResponseDTO';
-import { ExtendClosingDateResponseDTO } from './dto/extendMasterStatusResponseDTO';
-import { UpdateMasterStatusResponseDTO } from './dto/updateMasterStatusResponseDTO';
 
 @Controller('master')
 export class MasterController {
   constructor(private masterService: MasterService) {}
 
   @Get()
-  public async getMasters(): Promise<GetAvailableMastersDTO> {
+  public async getMasters(): Promise<ResponseData<{ masters: Master[] }>> {
     try {
       const masters = await this.masterService.getAvailableMasters();
       return {
         success: true,
-        data: masters,
+        statusCode: 200,
+        data: {
+          masters: masters,
+        },
       };
     } catch (error) {
-      throw new InternalServerErrorException();
+      if (error instanceof HttpException)
+        return {
+          success: false,
+          statusCode: error.getStatus(),
+          error: error.message,
+        };
     }
   }
 
@@ -42,15 +45,21 @@ export class MasterController {
   @UseGuards(authGuard)
   public async addMaster(
     @Body() addMasterDTO: AddMasterDTO,
-  ): Promise<AddMasterResponseDTO> {
+  ): Promise<ResponseData<{ master: Master }>> {
     try {
       const master = await this.masterService.addMaster(addMasterDTO);
       return {
         success: true,
-        data: master,
+        statusCode: 200,
+        data: { master: master },
       };
-    } catch {
-      throw new InternalServerErrorException();
+    } catch (error: any) {
+      if (error instanceof HttpException)
+        return {
+          success: false,
+          statusCode: error.getStatus(),
+          error: error.message,
+        };
     }
   }
 
@@ -58,16 +67,22 @@ export class MasterController {
   @UseGuards(isAdmin)
   @UseGuards(authGuard)
   public async deleteMaster(
-    @Body('masterID') masterID: number,
-  ): Promise<DeleteMasterResponseDTO> {
+    @Body('master_id') masterID: number,
+  ): Promise<ResponseData<{ master: Master }>> {
     try {
       const master = await this.masterService.deleteMaster(masterID);
       return {
         success: true,
-        data: master,
+        statusCode: 200,
+        data: { master: master },
       };
-    } catch {
-      throw new InternalServerErrorException();
+    } catch (error: any) {
+      if (error instanceof HttpException)
+        return {
+          success: false,
+          statusCode: error.getStatus(),
+          error: error.message,
+        };
     }
   }
 
@@ -76,17 +91,23 @@ export class MasterController {
   @UseGuards(authGuard)
   public async updateClosingDate(
     @Body() extendClosingDateDTO: ExtendClosingDateDTO,
-  ): Promise<ExtendClosingDateResponseDTO> {
+  ): Promise<ResponseData<{ master: Master }>> {
     try {
       const master = await this.masterService.extendMasterClosingDate(
         extendClosingDateDTO,
       );
       return {
         success: true,
-        data: master,
+        statusCode: 200,
+        data: { master: master },
       };
-    } catch {
-      throw new InternalServerErrorException();
+    } catch (error: any) {
+      if (error instanceof HttpException)
+        return {
+          success: false,
+          statusCode: error.getStatus(),
+          error: error.message,
+        };
     }
   }
 
@@ -95,17 +116,23 @@ export class MasterController {
   @UseGuards(authGuard)
   public async updateMasterStatus(
     @Body() updateMasterStatusDTO: UpdateMasterStatusDTO,
-  ): Promise<UpdateMasterStatusResponseDTO> {
+  ): Promise<ResponseData<{ master: Master }>> {
     try {
       const master = await this.masterService.updateMasterStatus(
         updateMasterStatusDTO,
       );
       return {
         success: true,
-        data: master,
+        statusCode: 200,
+        data: { master: master },
       };
-    } catch {
-      throw new InternalServerErrorException();
+    } catch (error: any) {
+      if (error instanceof HttpException)
+        return {
+          success: false,
+          statusCode: error.getStatus(),
+          error: error.message,
+        };
     }
   }
 }
