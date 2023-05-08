@@ -5,9 +5,11 @@ import {
   Patch,
   Delete,
   UseGuards,
-  Controller, HttpException
+  Controller,
+  HttpException,
 } from '@nestjs/common';
 import { Master } from '@prisma/client';
+import { ResponseData } from 'src/types';
 import { MasterService } from './master.service';
 import { AddMasterDTO } from './dto/addMasterDto';
 import { isAdmin } from 'src/guards/authorization.guard';

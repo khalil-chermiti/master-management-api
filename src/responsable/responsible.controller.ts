@@ -10,6 +10,7 @@ import { SigninDTO } from './dto/signinDTO';
 import { isAdmin } from 'src/guards/authorization.guard';
 import { authGuard } from '../guards/authentication.guard';
 import { ResponsibleService } from './responsible.service';
+import { ResponseData } from 'src/types';
 
 @Controller('admin')
 export class ResponsibleController {

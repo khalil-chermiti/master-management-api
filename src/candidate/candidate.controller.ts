@@ -1,3 +1,4 @@
+import { ResponseData } from 'src/types';
 import { Candidate } from '@prisma/client';
 import { SignUpInputDTO } from './dto/signupInputDTO';
 import { SigninInputDTO } from './dto/signinInputDTO';

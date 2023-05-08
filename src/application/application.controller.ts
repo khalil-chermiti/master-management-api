@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { ResponseData } from 'src/types';
 import { Application } from '@prisma/client';
 import { authJwt } from 'src/guards/jwtInterface';
 import { isAdmin } from 'src/guards/authorization.guard';
