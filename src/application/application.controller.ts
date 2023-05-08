@@ -3,7 +3,8 @@ import { authJwt } from 'src/guards/jwtInterface';
 import { ApplicationService } from './application.service';
 import { authGuard } from 'src/guards/authentication.guard';
 import { addApplicationOuputDTO } from './dto/addApplicationOutputDTO';
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { RemoveApplicationOutputDTO } from './dto/removeApplicationOutput';
+import { Body, Controller, Delete, Post, Req, UseGuards } from '@nestjs/common';
 
 @Controller('application')
 export class ApplicationController {
@@ -20,6 +21,24 @@ export class ApplicationController {
       candidate_id: parseInt(auth.id),
       master_id: masterID,
     });
+    return {
+      success: true,
+      data: application,
+    };
+  }
+
+  @Delete()
+  @UseGuards(authGuard)
+  public async removeApplication(
+    @Body('application_id') applicationID: number,
+    @Req() request: Request,
+  ): Promise<RemoveApplicationOutputDTO> {
+    const auth = request['user'] as authJwt;
+    const application = await this.applicationService.removeApplication({
+      application_id: applicationID,
+      candidate_id: parseInt(auth.id),
+    });
+
     return {
       success: true,
       data: application,

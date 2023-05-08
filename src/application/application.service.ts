@@ -4,6 +4,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ApplicationRepository } from './application.repository';
 import { AddApplicationInputDTO } from './dto/addApplicationInputDTO';
 import { CandidateRepository } from 'src/candidate/candidate.repository';
+import { RemoveApplicationInputDTO } from './dto/removeApplicationInputDTO';
 @Injectable()
 export class ApplicationService {
   constructor(
@@ -51,6 +52,24 @@ export class ApplicationService {
   }
 
   // remove application
+  public async removeApplication(
+    removeApplicationDTO: RemoveApplicationInputDTO,
+  ): Promise<Application> {
+    const applicationToDelete =
+      await this.applicationRepository.findApplicationByID(
+        removeApplicationDTO.application_id,
+      );
+
+    if (!applicationToDelete)
+      throw new BadRequestException('no application with such id');
+
+    if (applicationToDelete.candidate_id !== removeApplicationDTO.candidate_id)
+      throw new BadRequestException('not allowed to perform this action');
+
+    return this.applicationRepository.removeApplicationByID(
+      removeApplicationDTO.application_id,
+    );
+  }
 
   // get a candidate application
 

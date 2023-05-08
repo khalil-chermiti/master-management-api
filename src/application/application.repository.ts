@@ -26,6 +26,21 @@ export class ApplicationRepository {
     });
 
   // remove application
+  public removeApplicationByID = async (
+    applicaitonID: number,
+  ): Promise<Application> =>
+    await this.prismaService.application.delete({
+      where: {
+        id: applicaitonID,
+      },
+    });
+
+  public findApplicationByID = async (
+    applicationID: number,
+  ): Promise<Application> =>
+    await this.prismaService.application.findUnique({
+      where: { id: applicationID },
+    });
 
   // get a candidate application
 
