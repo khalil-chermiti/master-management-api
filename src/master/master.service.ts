@@ -7,6 +7,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { Master } from '@prisma/client';
 
 @Injectable()
 export class MasterService {
@@ -60,6 +61,14 @@ export class MasterService {
   public async updateMasterStatus(updateMasterDTO: UpdateMasterStatusDTO) {
     try {
       return await this.masterRespository.updateMasterStatus(updateMasterDTO);
+    } catch {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  public async getAvailableMasters(): Promise<Master[]> {
+    try {
+      return await this.masterRespository.getAvailableMaster();
     } catch {
       throw new InternalServerErrorException();
     }

@@ -1,3 +1,4 @@
+import { Master } from '@prisma/client';
 import { AddMasterDTO } from './dto/addMasterDto';
 import { PrismaService } from 'src/prismaService/prisma.service';
 import { ExtendClosingDateDTO } from './dto/extendClosingDateDTO';
@@ -57,6 +58,12 @@ export class MasterRepository {
       data: {
         is_active: updateMasterDTO.status,
       },
+    });
+  }
+
+  public async getAvailableMaster(): Promise<Master[]> {
+    return await this.prismaService.master.findMany({
+      where: { is_active: true },
     });
   }
 }

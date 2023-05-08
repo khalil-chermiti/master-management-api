@@ -1,4 +1,5 @@
 import {
+  Get,
   Body,
   Post,
   Patch,
@@ -15,11 +16,26 @@ import { ExtendClosingDateDTO } from './dto/extendClosingDateDTO';
 import { AddMasterResponseDTO } from './dto/addMasterResponseDTO';
 import { UpdateMasterStatusDTO } from './dto/updateMasterStatusDto';
 import { DeleteMasterResponseDTO } from './dto/DeleteMasterResponseDTO';
+import { GetAvailableMastersDTO } from './dto/getAvailableMastersResponseDTO';
 import { ExtendClosingDateResponseDTO } from './dto/extendMasterStatusResponseDTO';
 import { UpdateMasterStatusResponseDTO } from './dto/updateMasterStatusResponseDTO';
+
 @Controller('master')
 export class MasterController {
   constructor(private masterService: MasterService) {}
+
+  @Get()
+  public async getMasters(): Promise<GetAvailableMastersDTO> {
+    try {
+      const masters = await this.masterService.getAvailableMasters();
+      return {
+        success: true,
+        data: masters,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
 
   @Post()
   @UseGuards(isAdmin)
