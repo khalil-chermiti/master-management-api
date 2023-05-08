@@ -42,7 +42,14 @@ export class ApplicationRepository {
       where: { id: applicationID },
     });
 
-  // get a candidate application
-
-  // get all applications for a master
+  // accept application
+  public acceptApplicationByID = async (
+    applicationID: number,
+  ): Promise<Application> =>
+    await this.prismaService.application.update({
+      where: { id: applicationID },
+      data: {
+        status: 'ACCEPTED',
+      },
+    });
 }

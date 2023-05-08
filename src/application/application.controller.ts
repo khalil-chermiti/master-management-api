@@ -1,9 +1,11 @@
 import { Request } from 'express';
 import { authJwt } from 'src/guards/jwtInterface';
+import { isAdmin } from 'src/guards/authorization.guard';
 import { ApplicationService } from './application.service';
 import { authGuard } from 'src/guards/authentication.guard';
 import { addApplicationOuputDTO } from './dto/addApplicationOutputDTO';
 import { RemoveApplicationOutputDTO } from './dto/removeApplicationOutput';
+import { AcceptApplicationOutputDTO } from './dto/acceptApplicaitonOutputDTO';
 import { Body, Controller, Delete, Post, Req, UseGuards } from '@nestjs/common';
 
 @Controller('application')
@@ -38,6 +40,22 @@ export class ApplicationController {
       application_id: applicationID,
       candidate_id: parseInt(auth.id),
     });
+
+    return {
+      success: true,
+      data: application,
+    };
+  }
+
+  @Post('accept')
+  @UseGuards(isAdmin)
+  @UseGuards(authGuard)
+  public async acceptApplication(
+    @Body('application_id') applicationID: number,
+  ): Promise<AcceptApplicationOutputDTO> {
+    const application = await this.applicationService.acceptApplication(
+      applicationID,
+    );
 
     return {
       success: true,
