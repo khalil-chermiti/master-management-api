@@ -42,7 +42,6 @@ export class ApplicationRepository {
       where: { id: applicationID },
     });
 
-  // accept application
   public acceptApplicationByID = async (
     applicationID: number,
   ): Promise<Application> =>
@@ -50,6 +49,16 @@ export class ApplicationRepository {
       where: { id: applicationID },
       data: {
         status: 'ACCEPTED',
+      },
+    });
+
+  public rejectApplicationByID = async (
+    applicationID: number,
+  ): Promise<Application> =>
+    await this.prismaService.application.update({
+      where: { id: applicationID },
+      data: {
+        status: 'REJECTED',
       },
     });
 }

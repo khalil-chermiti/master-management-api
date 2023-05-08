@@ -62,4 +62,20 @@ export class ApplicationController {
       data: application,
     };
   }
+
+  @Post('reject')
+  @UseGuards(isAdmin)
+  @UseGuards(authGuard)
+  public async rejectApplication(
+    @Body('application_id') applicationID: number,
+  ): Promise<AcceptApplicationOutputDTO> {
+    const application = await this.applicationService.rejectApplication(
+      applicationID,
+    );
+
+    return {
+      success: true,
+      data: application,
+    };
+  }
 }

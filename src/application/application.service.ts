@@ -83,4 +83,17 @@ export class ApplicationService {
       applicationID,
     );
   }
+
+  public async rejectApplication(applicationID: number): Promise<Application> {
+    const application = await this.applicationRepository.findApplicationByID(
+      applicationID,
+    );
+
+    if (!application)
+      throw new BadRequestException('no application with such ID');
+
+    return await this.applicationRepository.rejectApplicationByID(
+      applicationID,
+    );
+  }
 }
