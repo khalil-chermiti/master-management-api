@@ -20,25 +20,45 @@ model Responsible {
 }
 
 model Master {
-  id           Int      @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   title        String
   description  String
   start_date   DateTime
   closing_date DateTime
   is_active    Boolean?
+  Application  Application[]
 }
 
 model Candidate {
-  cin          Int     @unique
-  id           Int     @id @default(autoincrement())
-  last_name    String  @db.VarChar(250)
-  first_name   String  @db.VarChar(250)
-  login        String  @unique @db.VarChar(250)
-  password     String  @db.VarChar(250)
-  email        String  @unique
-  phone_number Int     @unique
+  cin          Int           @unique
+  id           Int           @id @default(autoincrement())
+  last_name    String        @db.VarChar(250)
+  first_name   String        @db.VarChar(250)
+  login        String        @unique @db.VarChar(250)
+  password     String        @db.VarChar(250)
+  email        String        @unique
+  phone_number Int           @unique
   addresse     String?
   postal_code  Int?
   country      String?
   city         String?
+  Application  Application[]
+}
+
+model Application {
+  id               Int                @id @default(autoincrement())
+  status           Application_status @default(PENDING)
+  application_date DateTime           @default(now())
+
+  candidate    Candidate @relation(fields: [candidate_id], references: [id])
+  candidate_id Int
+
+  master    Master @relation(fields: [master_id], references: [id])
+  master_id Int
+}
+
+enum Application_status {
+  PENDING
+  ACCEPTED
+  REJECTED
 }

@@ -4,6 +4,7 @@ import { PrismaService } from './prismaService/prisma.service';
 import { ResponsibleModule } from './responsable/responsible.module';
 import { MasterModule } from './master/master.module';
 import { CandidateModule } from './candidate/candidate.module';
+import { ApplicationModule } from './application/application.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CandidateModule } from './candidate/candidate.module';
     ResponsibleModule,
     MasterModule,
     CandidateModule,
+    ApplicationModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

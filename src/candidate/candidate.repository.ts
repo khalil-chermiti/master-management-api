@@ -6,6 +6,9 @@ import { PrismaService } from 'src/prismaService/prisma.service';
 export class CandidateRepository {
   constructor(private prismaService: PrismaService) {}
 
+  public findCandidateByID = async (id: number): Promise<Candidate> =>
+    await this.prismaService.candidate.findUnique({ where: { id: id } });
+
   public findCandidateByEmail = async (email: string): Promise<Candidate> =>
     await this.prismaService.candidate.findUnique({ where: { email: email } });
 
