@@ -1,22 +1,22 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpException,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
 import { SigninDTO } from './dto/signinDTO';
-import { isAdmin } from 'src/guards/authorization.guard';
-import { authGuard } from '../guards/authentication.guard';
 import { ResponsibleService } from './responsible.service';
-import { ResponseData } from 'src/types';
+import { Body, Controller, HttpException, Post } from '@nestjs/common';
+import { ApiBadRequestResponse, ApiOkResponse } from '@nestjs/swagger';
+import { ResponseData, ResponseError, ResponseSuccess } from 'src/types';
 
 @Controller('admin')
 export class ResponsibleController {
   constructor(private responsibleService: ResponsibleService) {}
 
   @Post('login')
+  @ApiOkResponse({
+    description: 'admin logged in successfully',
+    type: ResponseSuccess,
+  })
+  @ApiBadRequestResponse({
+    description: 'admin login failed',
+    type: ResponseError,
+  })
   public async signin(
     @Body() signinDTO: SigninDTO,
   ): Promise<ResponseData<{ token: string }>> {
@@ -37,12 +37,5 @@ export class ResponsibleController {
           error: error.message,
         };
     }
-  }
-
-  @Get('test')
-  @UseGuards(isAdmin)
-  @UseGuards(authGuard)
-  public async tes() {
-    return 'hello';
   }
 }

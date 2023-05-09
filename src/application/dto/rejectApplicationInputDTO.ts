@@ -1,9 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class RemoveApplicationInputDTO {
+export class RejectApplicationInputDTO {
   @ApiProperty()
   application_id: number;
-
-  @ApiProperty()
-  candidate_id: number;
 }

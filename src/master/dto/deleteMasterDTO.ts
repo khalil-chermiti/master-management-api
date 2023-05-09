@@ -1,9 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class AddApplicationInputDTO {
-  @ApiProperty()
-  candidate_id: number;
-
+export class DeleteMasterDTO {
   @ApiProperty()
   master_id: number;
 }

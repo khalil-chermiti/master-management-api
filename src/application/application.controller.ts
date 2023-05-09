@@ -1,10 +1,13 @@
 import { Request } from 'express';
-import { ResponseData } from 'src/types';
 import { Application } from '@prisma/client';
 import { authJwt } from 'src/guards/jwtInterface';
 import { isAdmin } from 'src/guards/authorization.guard';
 import { ApplicationService } from './application.service';
 import { authGuard } from 'src/guards/authentication.guard';
+import { ApiOkResponse, ApiBadRequestResponse } from '@nestjs/swagger';
+import { ResponseData, ResponseError, ResponseSuccess } from 'src/types';
+import { AcceptApplicationInputDTO } from './dto/acceptApplicationInputDTO';
+import { RejectApplicationInputDTO } from './dto/rejectApplicationInputDTO';
 import {
   Body,
   Controller,
@@ -21,6 +24,14 @@ export class ApplicationController {
 
   @Post()
   @UseGuards(authGuard)
+  @ApiOkResponse({
+    description: 'candidate applied for master successfully',
+    type: ResponseSuccess,
+  })
+  @ApiBadRequestResponse({
+    description: 'candidate failed to apply for master',
+    type: ResponseError,
+  })
   public async addApplication(
     @Body('master_id') masterID: number,
     @Req() request: Request,
@@ -48,6 +59,14 @@ export class ApplicationController {
 
   @Delete()
   @UseGuards(authGuard)
+  @ApiOkResponse({
+    description: 'candidate removed application successfully',
+    type: ResponseSuccess,
+  })
+  @ApiBadRequestResponse({
+    description: 'candidate failed to remove application',
+    type: ResponseError,
+  })
   public async removeApplication(
     @Body('application_id') applicationID: number,
     @Req() request: Request,
@@ -77,12 +96,20 @@ export class ApplicationController {
   @Post('accept')
   @UseGuards(isAdmin)
   @UseGuards(authGuard)
+  @ApiOkResponse({
+    description: 'admin accepted application',
+    type: ResponseSuccess,
+  })
+  @ApiBadRequestResponse({
+    description: "admin could't accept application",
+    type: ResponseError,
+  })
   public async acceptApplication(
-    @Body('application_id') applicationID: number,
+    @Body() acceptApplicationDTO: AcceptApplicationInputDTO,
   ): Promise<ResponseData<{ application: Application }>> {
     try {
       const application = await this.applicationService.acceptApplication(
-        applicationID,
+        acceptApplicationDTO.application_id,
       );
 
       return {
@@ -103,12 +130,20 @@ export class ApplicationController {
   @Post('reject')
   @UseGuards(isAdmin)
   @UseGuards(authGuard)
+  @ApiOkResponse({
+    description: 'admin rejected application',
+    type: ResponseSuccess,
+  })
+  @ApiBadRequestResponse({
+    description: "admin could't reject application",
+    type: ResponseError,
+  })
   public async rejectApplication(
-    @Body('application_id') applicationID: number,
+    @Body() rejectApplicationInputDTO: RejectApplicationInputDTO,
   ): Promise<ResponseData<{ application: Application }>> {
     try {
       const application = await this.applicationService.rejectApplication(
-        applicationID,
+        rejectApplicationInputDTO.application_id,
       );
 
       return {

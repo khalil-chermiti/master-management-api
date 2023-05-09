@@ -1,8 +1,13 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class ResponseSuccess<T> {
+  @ApiProperty()
   public success: true;
 
+  @ApiProperty()
   public statusCode: number;
 
+  @ApiProperty()
   public data: T;
 
   constructor(success: true, statusCode: number, data: T) {
@@ -13,10 +18,13 @@ export class ResponseSuccess<T> {
 }
 
 export class ResponseError {
+  @ApiProperty()
   public success: false;
 
+  @ApiProperty()
   public statusCode: number;
 
+  @ApiProperty()
   public error: string;
 
   constructor(success: false, statusCode: number, error: string) {
