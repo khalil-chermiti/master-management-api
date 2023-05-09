@@ -20,3 +20,23 @@ this API allows :
 ## Screenshots
 
 ![App Screenshot](demo.png)
+
+## Installation
+
+Install project dependencies
+
+```bash
+  npm install
+```
+
+Run Postgress and Adminer with docker compose
+
+```
+  docker compose up -d
+```
+
+run project
+
+```
+  npm run start:dev
+```
