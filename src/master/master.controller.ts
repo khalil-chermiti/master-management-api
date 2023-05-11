@@ -21,7 +21,7 @@ import { ResponseData, ResponseError, ResponseSuccess } from 'src/types';
 
 @Controller('master')
 export class MasterController {
-  constructor(private masterService: MasterService) {}
+  constructor(private masterService: MasterService) { }
 
   @Get()
   @ApiOkResponse({

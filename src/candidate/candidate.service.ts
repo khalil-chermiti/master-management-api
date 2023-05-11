@@ -98,7 +98,7 @@ export class CandidateService {
     const result = this.validateCandidateSigninInput(signinDTO);
 
     if (result.success === false)
-      throw new BadRequestException(result.error.message);
+      throw new BadRequestException(result.error.issues[0].message);
 
     const candidate = await this.candidateRepository.findCandidateByUsername(
       result.data.login,
