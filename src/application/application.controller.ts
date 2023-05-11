@@ -12,6 +12,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpException,
   Post,
   Req,
@@ -21,6 +22,30 @@ import {
 @Controller('application')
 export class ApplicationController {
   constructor(private applicationService: ApplicationService) {}
+
+  @Get()
+  @UseGuards(authGuard)
+  public async getCandidateApplications(@Req() request: Request) {
+    const auth = request['user'] as authJwt;
+    try {
+      const applications =
+        await this.applicationService.getCandidateApplications(
+          parseInt(auth.id),
+        );
+      return {
+        success: true,
+        statusCode: 200,
+        data: applications,
+      };
+    } catch (error: any) {
+      if (error instanceof HttpException)
+        return {
+          success: false,
+          statusCode: error.getStatus(),
+          error: error.message,
+        };
+    }
+  }
 
   @Post()
   @UseGuards(authGuard)

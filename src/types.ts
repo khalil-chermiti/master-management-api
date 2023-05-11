@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Application, Master } from '@prisma/client';
 
 export class ResponseSuccess<T> {
   @ApiProperty()

@@ -1,10 +1,15 @@
-import { Application } from '@prisma/client';
+import { Application, Master } from '@prisma/client';
 import { MasterRepository } from 'src/master/master.repository';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ApplicationRepository } from './application.repository';
 import { AddApplicationInputDTO } from './dto/addApplicationInputDTO';
 import { CandidateRepository } from 'src/candidate/candidate.repository';
 import { RemoveApplicationInputDTO } from './dto/removeApplicationInputDTO';
+
+type ApplicationPopulated = Application & {
+  master: Master;
+};
+
 @Injectable()
 export class ApplicationService {
   constructor(
@@ -12,6 +17,26 @@ export class ApplicationService {
     private candidateRepository: CandidateRepository,
     private masterRepository: MasterRepository,
   ) {}
+
+  public async getCandidateApplications(
+    candidateid: number,
+  ): Promise<ApplicationPopulated[]> {
+    const candidate = await this.candidateRepository.findCandidateByID(
+      candidateid,
+    );
+
+    if (!candidate) throw new BadRequestException('no candidate with such ID');
+
+    const application =
+      await this.applicationRepository.findApplicationsByCandidateIDPopulated(
+        candidateid,
+      );
+
+    console.log(application);
+    if (!application) throw new BadRequestException('no application found');
+
+    return application;
+  }
 
   // add application
   public async addApplication(
@@ -36,8 +61,7 @@ export class ApplicationService {
       );
 
     const candidateDidApply = candidateApplicationsList.find(
-      (application) =>
-        application.candidate_id === addApplicationDTO.candidate_id,
+      (application) => application.master_id === addApplicationDTO.master_id,
     );
 
     if (candidateDidApply)
