@@ -11,6 +11,7 @@ import { SignUpInputDTO } from './dto/signupInputDTO';
 import { SigninInputDTO } from './dto/signinInputDTO';
 import { CandidateRepository } from './candidate.repository';
 import { HashingService } from 'src/hashingService/hashingService';
+import { GetCandidateDataDTO } from './dto/getCandidateDataDTO';
 
 @Injectable()
 export class CandidateService {
@@ -121,6 +122,20 @@ export class CandidateService {
     const token = this.jwtService.sign(payload, { expiresIn: '1h' });
 
     return token;
+  }
+
+  public async GetCandidateData(
+    getCandidateDataDTO: GetCandidateDataDTO,
+  ): Promise<Candidate> {
+    try {
+      const candidate = await this.candidateRepository.findCandidateByID(
+        getCandidateDataDTO.id,
+      );
+      delete candidate.password;
+      return candidate;
+    } catch {
+      throw new BadRequestException('no candidate with such id');
+    }
   }
 
   private validateCandidateSigninInput = (data: SigninInputDTO) =>

@@ -1,14 +1,58 @@
+import { Request } from 'express';
 import { Candidate } from '@prisma/client';
+import { authJwt } from 'src/guards/jwtInterface';
 import { SignUpInputDTO } from './dto/signupInputDTO';
 import { SigninInputDTO } from './dto/signinInputDTO';
 import { CandidateService } from './candidate.service';
+import { authGuard } from 'src/guards/authentication.guard';
 import { ApiOkResponse, ApiBadRequestResponse } from '@nestjs/swagger';
 import { ResponseData, ResponseError, ResponseSuccess } from 'src/types';
-import { Body, Controller, HttpException, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 
 @Controller('candidate')
 export class CandidateController {
   constructor(private candidateService: CandidateService) {}
+
+  @Get()
+  @UseGuards(authGuard)
+  @ApiOkResponse({
+    description: 'get logged in Candidate data',
+    type: ResponseSuccess,
+  })
+  @ApiBadRequestResponse({
+    description: 'get logged in Candidate data failed',
+    type: ResponseError,
+  })
+  public async getLoggedInCandide(
+    @Req() request: Request,
+  ): Promise<ResponseData<Omit<Candidate, 'password_match'>>> {
+    const auth = request['user'] as authJwt;
+    try {
+      const candidate = await this.candidateService.GetCandidateData({
+        id: parseInt(auth.id),
+      });
+      return {
+        success: true,
+        statusCode: 200,
+        data: candidate,
+      };
+    } catch (error: any) {
+      if (error instanceof HttpException)
+        return {
+          success: false,
+          statusCode: error.getStatus(),
+          error: error.message,
+        };
+    }
+  }
 
   @Post('signup')
   @ApiOkResponse({
