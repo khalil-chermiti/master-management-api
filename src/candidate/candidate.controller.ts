@@ -16,6 +16,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { Auth } from 'src/common/decorators/AuthDecorator';
 
 @Controller('candidate')
 export class CandidateController {
@@ -32,9 +33,8 @@ export class CandidateController {
     type: ResponseError,
   })
   public async getLoggedInCandide(
-    @Req() request: Request,
+    @Auth() auth : authJwt
   ): Promise<ResponseData<Omit<Candidate, 'password_match'>>> {
-    const auth = request['user'] as authJwt;
     try {
       const candidate = await this.candidateService.GetCandidateData({
         id: parseInt(auth.id),

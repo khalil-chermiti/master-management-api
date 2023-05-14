@@ -18,6 +18,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { Auth } from 'src/common/decorators/AuthDecorator';
 
 @Controller('application')
 export class ApplicationController {
@@ -25,8 +26,7 @@ export class ApplicationController {
 
   @Get()
   @UseGuards(authGuard)
-  public async getCandidateApplications(@Req() request: Request) {
-    const auth = request['user'] as authJwt;
+  public async getCandidateApplications(@Auth() auth : authJwt) : Promise<ResponseData<Application[]>> {
     try {
       const applications =
         await this.applicationService.getCandidateApplications(
@@ -59,9 +59,8 @@ export class ApplicationController {
   })
   public async addApplication(
     @Body('master_id') masterID: number,
-    @Req() request: Request,
+    @Auth() auth : authJwt,
   ): Promise<ResponseData<{ application: Application }>> {
-    const auth = request['user'] as authJwt;
     try {
       const application = await this.applicationService.addApplication({
         candidate_id: parseInt(auth.id),
@@ -94,9 +93,8 @@ export class ApplicationController {
   })
   public async removeApplication(
     @Body('application_id') applicationID: number,
-    @Req() request: Request,
+    @Auth() auth : authJwt,
   ): Promise<ResponseData<{ application: Application }>> {
-    const auth = request['user'] as authJwt;
     try {
       const application = await this.applicationService.removeApplication({
         application_id: applicationID,

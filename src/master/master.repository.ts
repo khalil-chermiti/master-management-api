@@ -1,6 +1,6 @@
 import { Master } from '@prisma/client';
 import { AddMasterDTO } from './dto/addMasterDto';
-import { PrismaService } from 'src/prismaService/prisma.service';
+import { PrismaService } from 'src/common/services/hashingService/prismaService/prisma.service';
 import { ExtendClosingDateDTO } from './dto/extendClosingDateDTO';
 import { UpdateMasterStatusDTO } from './dto/updateMasterStatusDto';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';

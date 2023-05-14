@@ -10,7 +10,7 @@ import { authJwt } from 'src/guards/jwtInterface';
 import { SignUpInputDTO } from './dto/signupInputDTO';
 import { SigninInputDTO } from './dto/signinInputDTO';
 import { CandidateRepository } from './candidate.repository';
-import { HashingService } from 'src/hashingService/hashingService';
+import { HashingService } from 'src/common/services/hashingService/hashingService';
 import { GetCandidateDataDTO } from './dto/getCandidateDataDTO';
 
 @Injectable()

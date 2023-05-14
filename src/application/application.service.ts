@@ -31,8 +31,6 @@ export class ApplicationService {
       await this.applicationRepository.findApplicationsByCandidateIDPopulated(
         candidateid,
       );
-
-    console.log(application);
     if (!application) throw new BadRequestException('no application found');
 
     return application;
