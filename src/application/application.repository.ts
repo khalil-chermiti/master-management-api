@@ -24,6 +24,14 @@ export class ApplicationRepository {
     await this.prismaService.application.findMany({
       where: { candidate_id: candidateID },
     });
+
+  public deleteApplicationsByMasterID = async (masterID: number) =>
+    await this.prismaService.application.deleteMany({
+      where: {
+        master_id: masterID,
+      },
+    });
+
   public findApplicationsByCandidateIDPopulated = async (candidateID: number) =>
     await this.prismaService.application.findMany({
       where: { candidate_id: candidateID },

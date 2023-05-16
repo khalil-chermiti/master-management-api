@@ -33,7 +33,7 @@ export class CandidateController {
     type: ResponseError,
   })
   public async getLoggedInCandide(
-    @Auth() auth : authJwt
+    @Auth() auth: authJwt,
   ): Promise<ResponseData<Omit<Candidate, 'password_match'>>> {
     try {
       const candidate = await this.candidateService.GetCandidateData({

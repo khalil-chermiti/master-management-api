@@ -26,7 +26,9 @@ export class ApplicationController {
 
   @Get()
   @UseGuards(authGuard)
-  public async getCandidateApplications(@Auth() auth : authJwt) : Promise<ResponseData<Application[]>> {
+  public async getCandidateApplications(
+    @Auth() auth: authJwt,
+  ): Promise<ResponseData<Application[]>> {
     try {
       const applications =
         await this.applicationService.getCandidateApplications(
@@ -59,7 +61,7 @@ export class ApplicationController {
   })
   public async addApplication(
     @Body('master_id') masterID: number,
-    @Auth() auth : authJwt,
+    @Auth() auth: authJwt,
   ): Promise<ResponseData<{ application: Application }>> {
     try {
       const application = await this.applicationService.addApplication({
@@ -93,7 +95,7 @@ export class ApplicationController {
   })
   public async removeApplication(
     @Body('application_id') applicationID: number,
-    @Auth() auth : authJwt,
+    @Auth() auth: authJwt,
   ): Promise<ResponseData<{ application: Application }>> {
     try {
       const application = await this.applicationService.removeApplication({

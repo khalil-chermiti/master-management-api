@@ -8,10 +8,14 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { ApplicationRepository } from 'src/application/application.repository';
 
 @Injectable()
 export class MasterService {
-  constructor(private masterRespository: MasterRepository) {}
+  constructor(
+    private masterRepository: MasterRepository,
+    private applicationRepository: ApplicationRepository,
+  ) {}
 
   public async addMaster(addMaserDTO: AddMasterDTO) {
     // validate date
@@ -22,12 +26,13 @@ export class MasterService {
         addMaserDTO.start_date,
       )
     )
-      return await this.masterRespository.addMaster(addMaserDTO);
+      return await this.masterRepository.addMaster(addMaserDTO);
     throw new BadRequestException('invalid date');
   }
 
   public async deleteMaster(masterID: number) {
-    return await this.masterRespository.removeMaster(masterID);
+    await this.applicationRepository.deleteApplicationsByMasterID(masterID);
+    return await this.masterRepository.removeMaster(masterID);
   }
 
   public async extendMasterClosingDate(
@@ -35,7 +40,7 @@ export class MasterService {
   ) {
     let master: Master;
     try {
-      master = await this.masterRespository.findMasterById(
+      master = await this.masterRepository.findMasterById(
         extendClosingDateDTO.masterID,
       );
     } catch {
@@ -55,7 +60,7 @@ export class MasterService {
       );
 
     try {
-      return await this.masterRespository.extendMasterClosingDate(
+      return await this.masterRepository.extendMasterClosingDate(
         extendClosingDateDTO,
       );
     } catch (error: any) {
@@ -65,7 +70,7 @@ export class MasterService {
 
   public async updateMasterStatus(updateMasterDTO: UpdateMasterStatusDTO) {
     try {
-      return await this.masterRespository.updateMasterStatus(updateMasterDTO);
+      return await this.masterRepository.updateMasterStatus(updateMasterDTO);
     } catch {
       throw new InternalServerErrorException();
     }
@@ -73,7 +78,7 @@ export class MasterService {
 
   public async getAvailableMasters(): Promise<Master[]> {
     try {
-      return await this.masterRespository.getAvailableMaster();
+      return await this.masterRepository.getAvailableMaster();
     } catch {
       throw new InternalServerErrorException();
     }

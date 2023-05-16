@@ -29,8 +29,10 @@ export class MasterRepository {
     try {
       return await this.prismaService.master.delete({
         where: { id: masterID },
+        include: { Application: true },
       });
     } catch (error: any) {
+      console.log(error);
       throw new InternalServerErrorException();
     }
   }
