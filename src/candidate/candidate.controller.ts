@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import { Candidate } from '@prisma/client';
 import { authJwt } from 'src/guards/jwtInterface';
 import { SignUpInputDTO } from './dto/signupInputDTO';

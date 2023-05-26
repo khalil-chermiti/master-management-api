@@ -91,4 +91,7 @@ export class MasterService {
 
   private startTimeIsInFuture = (date: string | Date) =>
     new Date(date).getTime() > new Date().getTime();
+
+  public getMasterById = async (master_id: number) =>
+    await this.masterRepository.findMasterById(master_id);
 }

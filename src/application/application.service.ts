@@ -1,4 +1,4 @@
-import { Application, Master } from '@prisma/client';
+import { Application, Candidate, Master } from '@prisma/client';
 import { MasterRepository } from 'src/master/master.repository';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ApplicationRepository } from './application.repository';
@@ -8,6 +8,10 @@ import { RemoveApplicationInputDTO } from './dto/removeApplicationInputDTO';
 
 type ApplicationPopulated = Application & {
   master: Master;
+};
+
+export type ApplicationWithCandidate = Application & {
+  candidate: Candidate;
 };
 
 @Injectable()
@@ -35,6 +39,11 @@ export class ApplicationService {
 
     return application;
   }
+
+  public getApplicationsByMasterId = async (
+    masterID: number,
+  ): Promise<ApplicationWithCandidate[]> =>
+    await this.applicationRepository.getApplicationsByMasterID(masterID);
 
   // add application
   public async addApplication(

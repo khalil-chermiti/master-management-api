@@ -2,5 +2,5 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class AcceptApplicationInputDTO {
   @ApiProperty()
-  application_id: number;
+  application_id: string;
 }

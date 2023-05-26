@@ -18,6 +18,12 @@ export class ApplicationRepository {
       },
     });
 
+  public getApplicationsByMasterID = async (masterID: number) =>
+    await this.prismaService.application.findMany({
+      where: { master_id: masterID },
+      include: { candidate: true },
+    });
+
   public findApplicationsByCandidateID = async (
     candidateID: number,
   ): Promise<Application[]> =>

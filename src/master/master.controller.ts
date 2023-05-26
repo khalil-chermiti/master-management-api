@@ -7,6 +7,7 @@ import {
   UseGuards,
   Controller,
   HttpException,
+  Param,
 } from '@nestjs/common';
 import { Master } from '@prisma/client';
 import { MasterService } from './master.service';
@@ -40,6 +41,37 @@ export class MasterController {
         statusCode: 200,
         data: {
           masters: masters,
+        },
+      };
+    } catch (error) {
+      if (error instanceof HttpException)
+        return {
+          success: false,
+          statusCode: error.getStatus(),
+          error: error.message,
+        };
+    }
+  }
+
+  @Get(':masterID')
+  @ApiOkResponse({
+    description: 'get list of available masters',
+    type: ResponseSuccess,
+  })
+  @ApiBadRequestResponse({
+    description: 'failed to get list of masters',
+    type: ResponseError,
+  })
+  public async getMastersById(
+    @Param('masterID') masterID: string,
+  ): Promise<ResponseData<{ master: Master }>> {
+    try {
+      const master = await this.masterService.getMasterById(parseInt(masterID));
+      return {
+        success: true,
+        statusCode: 200,
+        data: {
+          master: master,
         },
       };
     } catch (error) {

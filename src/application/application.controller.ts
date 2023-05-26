@@ -1,21 +1,25 @@
-import { Request } from 'express';
 import { Application } from '@prisma/client';
 import { authJwt } from 'src/guards/jwtInterface';
 import { isAdmin } from 'src/guards/authorization.guard';
-import { ApplicationService } from './application.service';
 import { authGuard } from 'src/guards/authentication.guard';
 import { ApiOkResponse, ApiBadRequestResponse } from '@nestjs/swagger';
 import { ResponseData, ResponseError, ResponseSuccess } from 'src/types';
 import { AcceptApplicationInputDTO } from './dto/acceptApplicationInputDTO';
 import { RejectApplicationInputDTO } from './dto/rejectApplicationInputDTO';
+
+import {
+  ApplicationService,
+  ApplicationWithCandidate,
+} from './application.service';
+
 import {
   Body,
   Controller,
   Delete,
   Get,
   HttpException,
+  Param,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { Auth } from 'src/common/decorators/AuthDecorator';
@@ -33,6 +37,32 @@ export class ApplicationController {
       const applications =
         await this.applicationService.getCandidateApplications(
           parseInt(auth.id),
+        );
+      return {
+        success: true,
+        statusCode: 200,
+        data: applications,
+      };
+    } catch (error: any) {
+      if (error instanceof HttpException)
+        return {
+          success: false,
+          statusCode: error.getStatus(),
+          error: error.message,
+        };
+    }
+  }
+
+  @Get(':master_id')
+  @UseGuards(isAdmin)
+  @UseGuards(authGuard)
+  public async getApplicationsByMaster(
+    @Param('master_id') masterID: string,
+  ): Promise<ResponseData<ApplicationWithCandidate[]>> {
+    try {
+      const applications =
+        await this.applicationService.getApplicationsByMasterId(
+          parseInt(masterID),
         );
       return {
         success: true,
@@ -134,7 +164,7 @@ export class ApplicationController {
   ): Promise<ResponseData<{ application: Application }>> {
     try {
       const application = await this.applicationService.acceptApplication(
-        acceptApplicationDTO.application_id,
+        parseInt(acceptApplicationDTO.application_id),
       );
 
       return {
